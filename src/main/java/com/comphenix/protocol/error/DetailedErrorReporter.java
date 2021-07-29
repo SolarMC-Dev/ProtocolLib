@@ -457,6 +457,7 @@ public class DetailedErrorReporter implements ErrorReporter {
 	 */
 	public static String getStringDescription(Object value) {
 		// We can't only rely on toString.
+                if (true) { return java.util.Objects.toString(value); } // Solar
 		if (value == null) {
 			return "[NULL]";
 		} if (isSimpleType(value) || value instanceof Class<?>) {
