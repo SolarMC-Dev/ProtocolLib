@@ -22,7 +22,7 @@ import java.util.List;
 import com.comphenix.protocol.error.BasicErrorReporter;
 import com.comphenix.protocol.error.ErrorReporter;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.bukkit.plugin.Plugin;
 
 /**

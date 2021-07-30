@@ -10,7 +10,7 @@ import com.comphenix.protocol.reflect.fuzzy.FuzzyMethodContract;
 import com.comphenix.protocol.utility.MinecraftReflection;
 
 import com.comphenix.protocol.utility.MinecraftVersion;
-import com.mojang.math.Vector3fa;
+//import com.mojang.math.Vector3fa; /Solar
 import org.bukkit.Color;
 import org.bukkit.Particle;
 import org.bukkit.inventory.ItemStack;
@@ -77,7 +77,7 @@ public class WrappedParticle<T> {
 	 * Gets this Particle's Bukkit/ProtocolLib data. The type of this data depends on the
 	 * {@link #getParticle() Particle type}. For Block particles it will be {@link WrappedBlockData},
 	 * for Item crack particles, it will be an {@link ItemStack}, and for redstone particles it will
-	 * be {@link Particle.DustOptions}
+	 * be {@code Particle.DustOptions}
 	 *
 	 * @return The particle data
 	 */
@@ -132,6 +132,7 @@ public class WrappedParticle<T> {
 	}
 
 	private static Object getRedstone(Object handle) {
+		throw new UnsupportedOperationException(); /* Solar start
 		int r, g, b;
 		float alpha;
 
@@ -152,6 +153,7 @@ public class WrappedParticle<T> {
 		}
 
 		return new Particle.DustOptions(Color.fromRGB(r, g, b), alpha);
+	*/ // Solar end
 	}
 
 	public static <T> WrappedParticle<T> create(Particle particle, T data) {

@@ -18,7 +18,7 @@ package com.comphenix.protocol.events;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;

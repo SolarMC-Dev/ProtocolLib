@@ -29,6 +29,7 @@ import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelConfig;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelId;
 import io.netty.channel.ChannelMetadata;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.ChannelProgressivePromise;
@@ -114,6 +115,13 @@ public abstract class ChannelProxy implements Channel {
     public EventLoop eventLoop() {
 		if (loopProxy == null) {
 			loopProxy = new EventLoopProxy() {
+				// Solar start - ProtocolLib was ready to give us AbstractMethodError
+				@Override
+				public ChannelFuture register(ChannelPromise channelPromise) {
+					return getDelegate().register(channelPromise);
+				}
+				// Solar end
+
 				@Override
 				protected EventLoop getDelegate() {
 					return delegate.eventLoop();
@@ -331,8 +339,9 @@ public abstract class ChannelProxy implements Channel {
     public int compareTo(Channel o) {
 		return delegate.compareTo(o);
 	}
-	
+
 	/* Added in Netty 4.1, seem to be unused
+// Solar start - ProtocolLib was ready to give us AbstractMethodError */
 	public long bytesBeforeUnwritable() {
 		return delegate.bytesBeforeUnwritable();
 	}
@@ -348,5 +357,6 @@ public abstract class ChannelProxy implements Channel {
 	public <T> boolean hasAttr(AttributeKey<T> key) {
 		return delegate.hasAttr(key);
 	}
+/* Solar end
 	*/
 }

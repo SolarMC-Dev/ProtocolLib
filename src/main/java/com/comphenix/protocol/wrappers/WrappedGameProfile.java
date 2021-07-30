@@ -3,7 +3,10 @@ package com.comphenix.protocol.wrappers;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import com.mojang.authlib.GameProfile;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.craftbukkit.v1_12_R1.CraftOfflinePlayer;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import com.comphenix.protocol.ProtocolLibrary;
@@ -25,11 +28,12 @@ import com.google.common.collect.Multimap;
  * Represents a wrapper for a game profile.
  * @author Kristian
  */
-public class WrappedGameProfile extends AbstractWrapper {
+public final class WrappedGameProfile extends AbstractWrapper { // Solar - make final
 	public static final ReportType REPORT_INVALID_UUID = new ReportType("Plugin %s created a profile with '%s' as an UUID.");
 
-	private static final Class<?> GAME_PROFILE = MinecraftReflection.getGameProfileClass();
+	private static final Class<?> GAME_PROFILE = GameProfile.class; // Solar
 
+/* Solar start
 	private static final ConstructorAccessor CREATE_STRING_STRING = Accessors.getConstructorAccessorOrNull(
 			GAME_PROFILE, String.class, String.class);
 	private static final ConstructorAccessor CREATE_UUID_STRING = Accessors.getConstructorAccessorOrNull(
@@ -50,18 +54,29 @@ public class WrappedGameProfile extends AbstractWrapper {
 	// Fetching game profile
 	private static FieldAccessor PLAYER_PROFILE;
 	private static FieldAccessor OFFLINE_PROFILE;
+ */ // Solar end
 
 	// Property map
 	private Multimap<String, WrappedSignedProperty> propertyMap;
 
 	// Parsed UUID
-	private volatile UUID parsedUUID;
+	private UUID parsedUUID; // Solar - non-volatile
 
 	// Profile from a handle
-	private WrappedGameProfile(Object profile) {
+// Solar start - use GameProfile
+	private WrappedGameProfile(GameProfile profile) {
 		super(GAME_PROFILE);
 		setHandle(profile);
 	}
+
+	private void setHandle(GameProfile handle) {
+		setHandle((Object) handle);
+	}
+
+	private GameProfile getHandleGameProfile() {
+		return (GameProfile) getHandle();
+	}
+// Solar end
 
 	/**
 	 * Retrieve the associated game profile of a player.
@@ -72,6 +87,7 @@ public class WrappedGameProfile extends AbstractWrapper {
 	 * @return The game profile.
 	 */
 	public static WrappedGameProfile fromPlayer(Player player) {
+/* Solar start
 		FieldAccessor accessor = PLAYER_PROFILE;
 		if (accessor == null) {
 			accessor = Accessors.getFieldAccessor(MinecraftReflection.getEntityHumanClass(), GAME_PROFILE, true);
@@ -80,6 +96,8 @@ public class WrappedGameProfile extends AbstractWrapper {
 
 		Object nmsPlayer = BukkitUnwrapper.getInstance().unwrapItem(player);
 		return WrappedGameProfile.fromHandle(PLAYER_PROFILE.get(nmsPlayer));
+		*/ return new WrappedGameProfile(((CraftPlayer) player).getProfile());
+// Solar end
 	}
 
 	/**
@@ -91,6 +109,7 @@ public class WrappedGameProfile extends AbstractWrapper {
 	 * @return The game profile.
 	 */
 	public static WrappedGameProfile fromOfflinePlayer(OfflinePlayer player) {
+/* Solar start
 		FieldAccessor accessor = OFFLINE_PROFILE;
 		if (accessor == null) {
 			accessor = Accessors.getFieldAccessor(player.getClass(), GAME_PROFILE, true);
@@ -98,6 +117,8 @@ public class WrappedGameProfile extends AbstractWrapper {
 		}
 
 		return WrappedGameProfile.fromHandle(OFFLINE_PROFILE.get(player));
+		*/ return new WrappedGameProfile(((CraftOfflinePlayer) player).getProfile());
+// Solar end
 	}
 
 	/**
@@ -115,6 +136,7 @@ public class WrappedGameProfile extends AbstractWrapper {
 	public WrappedGameProfile(String id, String name) {
 		super(GAME_PROFILE);
 
+/* Solar start
 		if (CREATE_STRING_STRING != null) {
 			setHandle(CREATE_STRING_STRING.invoke(id, name));
 		} else if (CREATE_UUID_STRING != null) {
@@ -122,6 +144,8 @@ public class WrappedGameProfile extends AbstractWrapper {
 		} else {
 			throw new IllegalArgumentException("Unsupported GameProfile constructor.");
 		}
+		*/ setHandle(new GameProfile(parseUUID(id), name));
+// Solar end
 	}
 
 	/**
@@ -135,6 +159,7 @@ public class WrappedGameProfile extends AbstractWrapper {
 	public WrappedGameProfile(UUID uuid, String name) {
 		super(GAME_PROFILE);
 
+/* Solar start
 		if (CREATE_STRING_STRING != null) {
 			setHandle(CREATE_STRING_STRING.invoke(uuid != null ? uuid.toString() : null, name));
 		} else if (CREATE_UUID_STRING != null) {
@@ -142,19 +167,21 @@ public class WrappedGameProfile extends AbstractWrapper {
 		} else {
 			throw new IllegalArgumentException("Unsupported GameProfile constructor.");
 		}
+		*/ setHandle(new GameProfile(uuid, name));
+// Solar end
 	}
 
 	/**
 	 * Construct a wrapper around an existing game profile.
 	 * 
-	 * @param handle - the underlying profile, or NULL.
+	 * @param handle - the underlying profile, or NULL. Null parameters result in null values
 	 * @return A wrapper around an existing game profile.
 	 */
 	public static WrappedGameProfile fromHandle(Object handle) {
 		if (handle == null)
 			return null;
 
-		return new WrappedGameProfile(handle);
+		return new WrappedGameProfile((GameProfile) handle); // Solar
 	}
 
 	/**
@@ -194,6 +221,7 @@ public class WrappedGameProfile extends AbstractWrapper {
 
 		if (uuid == null) {
 			try {
+/* Solar start
 				if (GET_UUID_STRING != null) {
 					uuid = parseUUID(getId());
 				} else if (GET_ID != null) {
@@ -201,6 +229,8 @@ public class WrappedGameProfile extends AbstractWrapper {
 				} else {
 					throw new IllegalStateException("Unsupported getId() method");
 				}
+				*/ uuid = getHandleGameProfile().getId();
+// Solar end
 
 				// Cache for later
 				parsedUUID = uuid;
@@ -222,10 +252,12 @@ public class WrappedGameProfile extends AbstractWrapper {
 	 * @return The UUID of the player, or NULL if not computed.
 	 */
 	public String getId() {
+/* Solar start
 		if (GET_UUID_STRING != null) {
 			return (String) GET_UUID_STRING.get(handle);
-		} else if (GET_ID != null) {
-			UUID uuid = (UUID) GET_ID.invoke(handle);
+		} else */ if (true) {
+			UUID uuid = getHandleGameProfile().getId();
+// Solar end
 			return uuid != null ? uuid.toString() : null;
 		} else {
 			throw new IllegalStateException("Unsupported getId() method");
@@ -238,11 +270,14 @@ public class WrappedGameProfile extends AbstractWrapper {
 	 * @return The player name.
 	 */
 	public String getName() {
+/* Solar start
 		if (GET_NAME != null) {
 			return (String) GET_NAME.invoke(handle);
 		} else {
 			throw new IllegalStateException("Unsupported getName() method");
 		}
+		*/ return getHandleGameProfile().getName();
+// Solar end
 	}
 
 	/**
@@ -256,7 +291,7 @@ public class WrappedGameProfile extends AbstractWrapper {
 		Multimap<String, WrappedSignedProperty> result = propertyMap;
 
 		if (result == null) {
-			Multimap properties = (Multimap) GET_PROPERTIES.invoke(handle);
+			Multimap properties = getHandleGameProfile().getProperties(); // Solar
 			result = new ConvertedMultimap<String, Object, WrappedSignedProperty>(GuavaWrappers.getBukkitMultimap(properties)) {
 				@Override
 				protected Object toInner(WrappedSignedProperty outer) {
@@ -307,7 +342,10 @@ public class WrappedGameProfile extends AbstractWrapper {
 	 * @return TRUE if it does, FALSE otherwise.
 	 */
 	public boolean isComplete() {
+/* Solar start
 		return (Boolean) IS_COMPLETE.invoke(handle);
+		*/ return getHandleGameProfile().isComplete();
+// Solar end
 	}
 
 	@Override
@@ -318,7 +356,7 @@ public class WrappedGameProfile extends AbstractWrapper {
 	@Override
 	public int hashCode() {
 		// Mojang's hashCode() is broken, it doesn't handle NULL id or name. So we implement our own
-		return Objects.hashCode(getId(), getName());
+		return getHandle().hashCode(); // Solar - not true
 	}
 
 	@Override

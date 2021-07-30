@@ -365,6 +365,7 @@ public class PipelineProxy implements ChannelPipeline {
 	}
 
 	/* Added in Netty 4.1, seem to be unused
+// Solar start - ProtocolLib was ready to give us AbstractMethodError */
 	public ChannelFuture newFailedFuture(Throwable ex) {
 		return pipeline.newFailedFuture(ex);
 	}
@@ -384,5 +385,6 @@ public class PipelineProxy implements ChannelPipeline {
 	public ChannelPromise voidPromise() {
 		return pipeline.voidPromise();
 	}
+	/* Solar end
 	*/
 }

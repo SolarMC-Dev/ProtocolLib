@@ -123,7 +123,7 @@ public class ProtocolLib extends JavaPlugin {
 
 	// Updater
 	private Updater updater;
-	public static boolean UPDATES_DISABLED;
+	public static final boolean UPDATES_DISABLED = true; // Solar
 
 	// Logger
 	private static Logger logger;
@@ -190,7 +190,7 @@ public class ProtocolLib extends JavaPlugin {
 			MinecraftVersion version = verifyMinecraftVersion();
 
 			// Set updater - this will not perform any update automatically
-			updater = Updater.create(this, BUKKIT_DEV_ID, getFile(), UpdateType.NO_DOWNLOAD, true);
+			updater = new Updater() {}; // Solar
 
 			unhookTask = new DelayedSingleTask(this);
 			protocolManager = PacketFilterManager.newBuilder()
@@ -551,9 +551,11 @@ public class ProtocolLib extends JavaPlugin {
 					updateConfiguration();
 
 					// Check for updates too
+					/* Solar start
 					if (!UPDATES_DISABLED && (tickCounter % 20) == 0) {
 						checkUpdates();
 					}
+					*/ // Solar end
 				}
 			}, ASYNC_MANAGER_DELAY, ASYNC_MANAGER_DELAY);
 		} catch (OutOfMemoryError e) {
@@ -574,6 +576,7 @@ public class ProtocolLib extends JavaPlugin {
 		}
 	}
 
+	/* Solar start
 	private void checkUpdates() {
 		// Ignore milliseconds - it's pointless
 		long currentTime = System.currentTimeMillis() / MILLI_PER_SECOND;
@@ -596,6 +599,7 @@ public class ProtocolLib extends JavaPlugin {
 			UPDATES_DISABLED = true;
 		}
 	}
+	*/ // Solar end
 
 	@Override
 	public void onDisable() {

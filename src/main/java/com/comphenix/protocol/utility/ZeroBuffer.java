@@ -2,17 +2,19 @@ package com.comphenix.protocol.utility;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
-import io.netty.buffer.ByteBufProcessor;
+import io.netty.util.ByteProcessor;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.channels.FileChannel;
 import java.nio.channels.GatheringByteChannel;
 import java.nio.channels.ScatteringByteChannel;
 import java.nio.charset.Charset;
 
+// Solar - whole class to netty 4.1.x
 public class ZeroBuffer extends ByteBuf {
     @Override
     public int capacity() {
@@ -52,6 +54,16 @@ public class ZeroBuffer extends ByteBuf {
     @Override
     public boolean isDirect() {
         return false;
+    }
+
+    @Override
+    public boolean isReadOnly() {
+        return false;
+    }
+
+    @Override
+    public ByteBuf asReadOnly() {
+        return null;
     }
 
     @Override
@@ -180,7 +192,17 @@ public class ZeroBuffer extends ByteBuf {
     }
 
     @Override
+    public short getShortLE(int index) {
+        return 0;
+    }
+
+    @Override
     public int getUnsignedShort(int i) {
+        return 0;
+    }
+
+    @Override
+    public int getUnsignedShortLE(int index) {
         return 0;
     }
 
@@ -190,7 +212,17 @@ public class ZeroBuffer extends ByteBuf {
     }
 
     @Override
+    public int getMediumLE(int index) {
+        return 0;
+    }
+
+    @Override
     public int getUnsignedMedium(int i) {
+        return 0;
+    }
+
+    @Override
+    public int getUnsignedMediumLE(int index) {
         return 0;
     }
 
@@ -200,12 +232,27 @@ public class ZeroBuffer extends ByteBuf {
     }
 
     @Override
+    public int getIntLE(int index) {
+        return 0;
+    }
+
+    @Override
     public long getUnsignedInt(int i) {
         return 0;
     }
 
     @Override
+    public long getUnsignedIntLE(int index) {
+        return 0;
+    }
+
+    @Override
     public long getLong(int i) {
+        return 0;
+    }
+
+    @Override
+    public long getLongLE(int index) {
         return 0;
     }
 
@@ -265,6 +312,16 @@ public class ZeroBuffer extends ByteBuf {
     }
 
     @Override
+    public int getBytes(int index, FileChannel out, long position, int length) throws IOException {
+        return 0;
+    }
+
+    @Override
+    public CharSequence getCharSequence(int index, int length, Charset charset) {
+        return null;
+    }
+
+    @Override
     public ByteBuf setBoolean(int i, boolean b) {
         return null;
     }
@@ -280,7 +337,17 @@ public class ZeroBuffer extends ByteBuf {
     }
 
     @Override
+    public ByteBuf setShortLE(int index, int value) {
+        return null;
+    }
+
+    @Override
     public ByteBuf setMedium(int i, int i1) {
+        return null;
+    }
+
+    @Override
+    public ByteBuf setMediumLE(int index, int value) {
         return null;
     }
 
@@ -290,7 +357,17 @@ public class ZeroBuffer extends ByteBuf {
     }
 
     @Override
+    public ByteBuf setIntLE(int index, int value) {
+        return null;
+    }
+
+    @Override
     public ByteBuf setLong(int i, long l) {
+        return null;
+    }
+
+    @Override
+    public ByteBuf setLongLE(int index, long value) {
         return null;
     }
 
@@ -350,8 +427,18 @@ public class ZeroBuffer extends ByteBuf {
     }
 
     @Override
+    public int setBytes(int index, FileChannel in, long position, int length) throws IOException {
+        return 0;
+    }
+
+    @Override
     public ByteBuf setZero(int i, int i1) {
         return null;
+    }
+
+    @Override
+    public int setCharSequence(int index, CharSequence sequence, Charset charset) {
+        return 0;
     }
 
     @Override
@@ -375,7 +462,17 @@ public class ZeroBuffer extends ByteBuf {
     }
 
     @Override
+    public short readShortLE() {
+        return 0;
+    }
+
+    @Override
     public int readUnsignedShort() {
+        return 0;
+    }
+
+    @Override
+    public int readUnsignedShortLE() {
         return 0;
     }
 
@@ -385,7 +482,17 @@ public class ZeroBuffer extends ByteBuf {
     }
 
     @Override
+    public int readMediumLE() {
+        return 0;
+    }
+
+    @Override
     public int readUnsignedMedium() {
+        return 0;
+    }
+
+    @Override
+    public int readUnsignedMediumLE() {
         return 0;
     }
 
@@ -395,12 +502,27 @@ public class ZeroBuffer extends ByteBuf {
     }
 
     @Override
+    public int readIntLE() {
+        return 0;
+    }
+
+    @Override
     public long readUnsignedInt() {
         return 0;
     }
 
     @Override
+    public long readUnsignedIntLE() {
+        return 0;
+    }
+
+    @Override
     public long readLong() {
+        return 0;
+    }
+
+    @Override
+    public long readLongLE() {
         return 0;
     }
 
@@ -426,6 +548,11 @@ public class ZeroBuffer extends ByteBuf {
 
     @Override
     public ByteBuf readSlice(int i) {
+        return null;
+    }
+
+    @Override
+    public ByteBuf readRetainedSlice(int length) {
         return null;
     }
 
@@ -470,6 +597,16 @@ public class ZeroBuffer extends ByteBuf {
     }
 
     @Override
+    public CharSequence readCharSequence(int length, Charset charset) {
+        return null;
+    }
+
+    @Override
+    public int readBytes(FileChannel out, long position, int length) throws IOException {
+        return 0;
+    }
+
+    @Override
     public ByteBuf skipBytes(int i) {
         return null;
     }
@@ -490,7 +627,17 @@ public class ZeroBuffer extends ByteBuf {
     }
 
     @Override
+    public ByteBuf writeShortLE(int value) {
+        return null;
+    }
+
+    @Override
     public ByteBuf writeMedium(int i) {
+        return null;
+    }
+
+    @Override
+    public ByteBuf writeMediumLE(int value) {
         return null;
     }
 
@@ -500,7 +647,17 @@ public class ZeroBuffer extends ByteBuf {
     }
 
     @Override
+    public ByteBuf writeIntLE(int value) {
+        return null;
+    }
+
+    @Override
     public ByteBuf writeLong(long l) {
+        return null;
+    }
+
+    @Override
+    public ByteBuf writeLongLE(long value) {
         return null;
     }
 
@@ -560,8 +717,18 @@ public class ZeroBuffer extends ByteBuf {
     }
 
     @Override
+    public int writeBytes(FileChannel in, long position, int length) throws IOException {
+        return 0;
+    }
+
+    @Override
     public ByteBuf writeZero(int i) {
         return null;
+    }
+
+    @Override
+    public int writeCharSequence(CharSequence sequence, Charset charset) {
+        return 0;
     }
 
     @Override
@@ -585,6 +752,27 @@ public class ZeroBuffer extends ByteBuf {
     }
 
     @Override
+    public int forEachByte(ByteProcessor processor) {
+        return 0;
+    }
+
+    @Override
+    public int forEachByte(int index, int length, ByteProcessor processor) {
+        return 0;
+    }
+
+    @Override
+    public int forEachByteDesc(ByteProcessor processor) {
+        return 0;
+    }
+
+    @Override
+    public int forEachByteDesc(int index, int length, ByteProcessor processor) {
+        return 0;
+    }
+
+/* Solar
+    @Override
     public int forEachByte(ByteBufProcessor byteBufProcessor) {
         return 0;
     }
@@ -603,6 +791,7 @@ public class ZeroBuffer extends ByteBuf {
     public int forEachByteDesc(int i, int i1, ByteBufProcessor byteBufProcessor) {
         return 0;
     }
+*/
 
     @Override
     public ByteBuf copy() {
@@ -620,12 +809,27 @@ public class ZeroBuffer extends ByteBuf {
     }
 
     @Override
+    public ByteBuf retainedSlice() {
+        return null;
+    }
+
+    @Override
     public ByteBuf slice(int i, int i1) {
         return null;
     }
 
     @Override
+    public ByteBuf retainedSlice(int index, int length) {
+        return null;
+    }
+
+    @Override
     public ByteBuf duplicate() {
+        return null;
+    }
+
+    @Override
+    public ByteBuf retainedDuplicate() {
         return null;
     }
 
@@ -736,6 +940,16 @@ public class ZeroBuffer extends ByteBuf {
 
     @Override
     public ByteBuf retain() {
+        return null;
+    }
+
+    @Override
+    public ByteBuf touch() {
+        return null;
+    }
+
+    @Override
+    public ByteBuf touch(Object hint) {
         return null;
     }
 }

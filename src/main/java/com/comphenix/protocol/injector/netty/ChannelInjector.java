@@ -49,7 +49,7 @@ import io.netty.handler.codec.MessageToByteEncoder;
 import io.netty.util.AttributeKey;
 import io.netty.util.internal.TypeParameterMatcher;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 

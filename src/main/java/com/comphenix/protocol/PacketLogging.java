@@ -37,7 +37,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.libs.org.apache.commons.io.HexDump;
+import org.apache.commons.io.HexDump;
 import org.bukkit.plugin.Plugin;
 
 /**

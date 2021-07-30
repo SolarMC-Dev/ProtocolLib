@@ -379,6 +379,7 @@ public class BukkitConverters {
 	@SuppressWarnings("rawtypes")
 	public static <A, B> EquivalentConverter<Pair<A, B>> getPairConverter(final EquivalentConverter<A> firstConverter,
 																		  final EquivalentConverter<B> secondConverter) {
+/* Solar start
 		return ignoreNull(new EquivalentConverter<Pair<A, B>>() {
 			@Override
 			public Object getGeneric(Pair<A, B> specific) {
@@ -404,6 +405,8 @@ public class BukkitConverters {
 				return (Class<Pair<A, B>>) dummy;
 			}
 		});
+		*/ throw new UnsupportedOperationException("Not available for 1.12");
+// Solar end
 	}
 
 	/**
