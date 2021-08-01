@@ -886,7 +886,18 @@ public final class PacketFilterManager implements ListenerInvoker, InternalManag
 		if (nettyInjector != null)
 			nettyInjector.inject();
 
+/* Solar start - use inner class
 		manager.registerEvents(new Listener() {
+*/		manager.registerEvents(new PlayerLifecycleListener(plugin), plugin);
+	}
+
+	public class PlayerLifecycleListener implements Listener {
+
+		private final Plugin plugin;
+
+		private PlayerLifecycleListener(Plugin plugin) {
+			this.plugin = plugin;
+		}
 
 			@EventHandler(priority = EventPriority.LOWEST)
 			public void onPlayerLogin(PlayerLoginEvent event) {
@@ -913,7 +924,9 @@ public final class PacketFilterManager implements ListenerInvoker, InternalManag
 					PacketFilterManager.this.onPluginDisabled(event, plugin);
 				}
 
+/*
 		}, plugin);
+*/ // Solar end
 	}
 
     private void onPlayerLogin(PlayerLoginEvent event) {

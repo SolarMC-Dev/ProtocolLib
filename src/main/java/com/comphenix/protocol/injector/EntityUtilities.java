@@ -34,6 +34,7 @@ import com.comphenix.protocol.utility.MinecraftVersion;
 import com.comphenix.protocol.wrappers.WrappedIntHashMap;
 import com.google.common.collect.Lists;
 
+import net.minecraft.server.v1_12_R1.EntityPlayer;
 import org.apache.commons.lang3.Validate;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -274,7 +275,7 @@ class EntityUtilities {
 
 	private List<Object> getPlayerConnections(List<Object> nmsPlayers) {
 		List<Object> connections = new ArrayList<>(nmsPlayers.size());
-		nmsPlayers.forEach(nmsPlayer -> connections.add(MinecraftFields.getPlayerConnection(nmsPlayer)));
+		nmsPlayers.forEach(nmsPlayer -> connections.add(MinecraftFields.getPlayerConnection((EntityPlayer) nmsPlayer))); // Solar
 		return connections;
 	}
 

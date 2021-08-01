@@ -1,5 +1,6 @@
 package com.comphenix.protocol.utility;
 
+import net.minecraft.server.v1_12_R1.EntityPlayer;
 import org.bukkit.entity.Player;
 
 import com.comphenix.protocol.injector.BukkitUnwrapper;
@@ -27,7 +28,7 @@ public class MinecraftFields {
 	 * @return The network manager, or NULL if no network manager has been associated yet.
 	 */
 	public static Object getNetworkManager(Player player) {
-		Object nmsPlayer = BukkitUnwrapper.getInstance().unwrapItem(player);
+		EntityPlayer nmsPlayer = BukkitUnwrapper.getInstance().unwrapItem(player); // Solar
 		
 		if (NETWORK_ACCESSOR == null) {
 			Class<?> networkClass = MinecraftReflection.getNetworkManagerClass();
@@ -57,14 +58,17 @@ public class MinecraftFields {
 	 * @param nmsPlayer - the NMS player.
 	 * @return The player connection.
 	 */
-	public static Object getPlayerConnection(Object nmsPlayer) {
+	public static Object getPlayerConnection(EntityPlayer nmsPlayer) { // Solar - use EntityPlayer
 		Preconditions.checkNotNull(nmsPlayer, "nmsPlayer cannot be null!");
 
+// Solar start
+		return nmsPlayer.playerConnection; /*
 		if (CONNECTION_ACCESSOR == null) {
 			Class<?> connectionClass = MinecraftReflection.getPlayerConnectionClass();
 			CONNECTION_ACCESSOR = Accessors.getFieldAccessor(nmsPlayer.getClass(), connectionClass, true);
 		}
 		return CONNECTION_ACCESSOR.get(nmsPlayer);
+*/ // Solar end
 	}
 
 	/**

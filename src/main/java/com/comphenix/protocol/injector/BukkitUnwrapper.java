@@ -24,7 +24,9 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import net.minecraft.server.v1_12_R1.EntityPlayer;
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import com.comphenix.protocol.ProtocolLibrary;
@@ -90,7 +92,13 @@ public class BukkitUnwrapper implements Unwrapper {
 	public BukkitUnwrapper(ErrorReporter reporter) {
 		 this.reporter = reporter;
 	}
-	
+
+	// Solar start
+	public EntityPlayer unwrapItem(Player player) {
+		return ((CraftPlayer) player).getHandle();
+	}
+	// Solar end
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public Object unwrapItem(Object wrappedObject) {
