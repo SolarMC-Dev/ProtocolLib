@@ -14,6 +14,7 @@ import com.comphenix.protocol.utility.MinecraftVersion;
 import com.comphenix.protocol.utility.MinecraftReflection;
 import com.google.common.collect.Maps;
 
+import net.minecraft.server.v1_12_R1.EnumGamemode;
 import org.apache.commons.lang3.Validate;
 import org.bukkit.GameMode;
 
@@ -109,6 +110,12 @@ public abstract class EnumWrappers {
 					return null;
 			}
 		}
+
+		// Solar start
+		EnumGamemode getHandleNarrow() {
+			return (EnumGamemode) EnumWrappers.getGameModeConverter().getGeneric(this);
+		}
+		// Solar end
 	}
 
 	public enum ResourcePackStatus {

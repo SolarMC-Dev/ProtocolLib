@@ -2,6 +2,8 @@ package com.comphenix.protocol.wrappers;
 
 import java.io.StringReader;
 
+import com.mojang.authlib.GameProfile;
+import net.minecraft.server.v1_12_R1.IChatBaseComponent;
 import org.bukkit.ChatColor;
 
 import com.comphenix.protocol.reflect.FieldUtils;
@@ -74,6 +76,12 @@ public class WrappedChatComponent extends AbstractWrapper implements ClonableWra
 		setHandle(handle);
 		this.cache = cache;
 	}
+
+	// Solar start
+	IChatBaseComponent getHandleNarrow() {
+		return (IChatBaseComponent) getHandle();
+	}
+	// Solar end
 	
 	/**
 	 * Construct a new chat component wrapper around the given NMS object.

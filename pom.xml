@@ -98,6 +98,7 @@
 							<Implementation-Title>ProtocolLib</Implementation-Title>
 							<Implementation-Version>${project.fullVersion}</Implementation-Version>
 							<Implementation-Vendor>dmulloy2</Implementation-Vendor>
+							<Automatic-Module-Name>com.comphenix.protocol</Automatic-Module-Name> <!-- Solar -->
 						</manifestEntries>
 					</archive>
 					<finalName>${project.name}</finalName>

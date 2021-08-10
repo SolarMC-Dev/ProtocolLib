@@ -13,12 +13,6 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.error.PluginContext;
 import com.comphenix.protocol.error.Report;
 import com.comphenix.protocol.error.ReportType;
-import com.comphenix.protocol.injector.BukkitUnwrapper;
-import com.comphenix.protocol.reflect.accessors.Accessors;
-import com.comphenix.protocol.reflect.accessors.ConstructorAccessor;
-import com.comphenix.protocol.reflect.accessors.FieldAccessor;
-import com.comphenix.protocol.reflect.accessors.MethodAccessor;
-import com.comphenix.protocol.utility.MinecraftReflection;
 import com.comphenix.protocol.wrappers.collection.ConvertedMultimap;
 import com.google.common.base.Charsets;
 import com.google.common.base.Objects;
@@ -73,7 +67,7 @@ public final class WrappedGameProfile extends AbstractWrapper { // Solar - make 
 		setHandle((Object) handle);
 	}
 
-	private GameProfile getHandleGameProfile() {
+	GameProfile getHandleNarrow() {
 		return (GameProfile) getHandle();
 	}
 // Solar end
@@ -229,7 +223,7 @@ public final class WrappedGameProfile extends AbstractWrapper { // Solar - make 
 				} else {
 					throw new IllegalStateException("Unsupported getId() method");
 				}
-				*/ uuid = getHandleGameProfile().getId();
+				*/ uuid = getHandleNarrow().getId();
 // Solar end
 
 				// Cache for later
@@ -256,7 +250,7 @@ public final class WrappedGameProfile extends AbstractWrapper { // Solar - make 
 		if (GET_UUID_STRING != null) {
 			return (String) GET_UUID_STRING.get(handle);
 		} else */ if (true) {
-			UUID uuid = getHandleGameProfile().getId();
+			UUID uuid = getHandleNarrow().getId();
 // Solar end
 			return uuid != null ? uuid.toString() : null;
 		} else {
@@ -276,7 +270,7 @@ public final class WrappedGameProfile extends AbstractWrapper { // Solar - make 
 		} else {
 			throw new IllegalStateException("Unsupported getName() method");
 		}
-		*/ return getHandleGameProfile().getName();
+		*/ return getHandleNarrow().getName();
 // Solar end
 	}
 
@@ -291,7 +285,7 @@ public final class WrappedGameProfile extends AbstractWrapper { // Solar - make 
 		Multimap<String, WrappedSignedProperty> result = propertyMap;
 
 		if (result == null) {
-			Multimap properties = getHandleGameProfile().getProperties(); // Solar
+			Multimap properties = getHandleNarrow().getProperties(); // Solar
 			result = new ConvertedMultimap<String, Object, WrappedSignedProperty>(GuavaWrappers.getBukkitMultimap(properties)) {
 				@Override
 				protected Object toInner(WrappedSignedProperty outer) {
@@ -344,7 +338,7 @@ public final class WrappedGameProfile extends AbstractWrapper { // Solar - make 
 	public boolean isComplete() {
 /* Solar start
 		return (Boolean) IS_COMPLETE.invoke(handle);
-		*/ return getHandleGameProfile().isComplete();
+		*/ return getHandleNarrow().isComplete();
 // Solar end
 	}
 

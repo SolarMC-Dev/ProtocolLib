@@ -27,6 +27,7 @@ import com.comphenix.protocol.utility.MinecraftReflection;
 import com.comphenix.protocol.utility.MinecraftVersion;
 import com.comphenix.protocol.wrappers.EnumWrappers.NativeGameMode;
 import com.google.common.base.Objects;
+import net.minecraft.server.v1_12_R1.PacketPlayOutPlayerInfo;
 
 /**
  * Represents an immutable PlayerInfoData in the PLAYER_INFO packet.
@@ -96,6 +97,7 @@ public class PlayerInfoData {
 		return new EquivalentConverter<PlayerInfoData>() {
 			@Override
 			public Object getGeneric(PlayerInfoData specific) {
+				/* Solar start
 				if (constructor == null) {
 					try {
 						List<Class<?>> args = new ArrayList<>();
@@ -113,9 +115,16 @@ public class PlayerInfoData {
 						throw new RuntimeException("Cannot find PlayerInfoData constructor.", e);
 					}
 				}
+				*/ // Solar end
 
 				// Attempt to construct the underlying PlayerInfoData
 
+				// Solar start
+				return new PacketPlayOutPlayerInfo().new PlayerInfoData(
+						specific.profile.getHandleNarrow(),
+						specific.latency,
+						specific.gameMode.getHandleNarrow(),
+						specific.displayName != null ? specific.displayName.getHandleNarrow() : null); /*
 				try {
 					Object gameMode = EnumWrappers.getGameModeConverter().getGeneric(specific.gameMode);
 					Object displayName = specific.displayName != null ? specific.displayName.handle : null;
@@ -127,7 +136,7 @@ public class PlayerInfoData {
 					}
 				} catch (Exception e) {
 					throw new RuntimeException("Failed to construct PlayerInfoData.", e);
-				}
+				}*/ // Solar end
 			}
 
 			@Override
