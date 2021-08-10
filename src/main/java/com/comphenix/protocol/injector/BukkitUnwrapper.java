@@ -25,7 +25,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import net.minecraft.server.v1_12_R1.EntityPlayer;
+import net.minecraft.server.v1_12_R1.WorldServer;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
@@ -96,6 +99,10 @@ public class BukkitUnwrapper implements Unwrapper {
 	// Solar start
 	public EntityPlayer unwrapItem(Player player) {
 		return ((CraftPlayer) player).getHandle();
+	}
+
+	public WorldServer unwrapItem(World world) {
+		return ((CraftWorld) world).getHandle();
 	}
 	// Solar end
 
@@ -169,7 +176,12 @@ public class BukkitUnwrapper implements Unwrapper {
 						if (wrappedObject instanceof Class)
 							return checkClass((Class<?>) wrappedObject, type, find.getReturnType());
 						return find.invoke(wrappedObject);
-						
+
+// Solar start - stop swallowing exceptions
+					} catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
+						// This is really bad
+						throw new RuntimeException("Reflection issue", e);
+					} /*
 					} catch (IllegalArgumentException e) {
 						reporter.reportDetailed(this,
 								Report.newBuilder(REPORT_ILLEGAL_ARGUMENT).error(e).callerParam(wrappedObject, find)
@@ -183,6 +195,7 @@ public class BukkitUnwrapper implements Unwrapper {
 					}
 					
 					return null;
+*/ // Solar end
 				}
 			};
 			

@@ -35,8 +35,10 @@ import com.comphenix.protocol.wrappers.WrappedIntHashMap;
 import com.google.common.collect.Lists;
 
 import net.minecraft.server.v1_12_R1.EntityPlayer;
+import net.minecraft.server.v1_12_R1.WorldServer;
 import org.apache.commons.lang3.Validate;
 import org.bukkit.World;
+import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -187,8 +189,10 @@ class EntityUtilities {
 	}
 
 	private Object getEntityTrackerEntry(World world, int entityID) {
+/// Solar start
 		BukkitUnwrapper unwrapper = new BukkitUnwrapper();
-		Object worldServer = unwrapper.unwrapItem(world);
+		WorldServer worldServer = unwrapper.unwrapItem(world);
+		return worldServer.getTracker().trackedEntities.get(entityID); /*
 
 		if (NEW_TRACKER) {
 			return getNewEntityTracker(worldServer, entityID);
@@ -210,6 +214,7 @@ class EntityUtilities {
 		// Read the map
 		Object trackedEntities = trackedEntitiesField.get(tracker);
 		return WrappedIntHashMap.fromHandle(trackedEntities).get(entityID);
+*/ // Solar end
 	}
 
 	private Map<Class<?>, FieldAccessor> trackerFields = new ConcurrentHashMap<>();
