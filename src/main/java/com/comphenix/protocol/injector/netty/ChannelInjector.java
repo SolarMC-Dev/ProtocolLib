@@ -514,6 +514,8 @@ public class ChannelInjector extends ByteToMessageDecoder implements Injector {
 				// Sent listeners?
 				finalEvent = event;
 			}
+// Solar start - stop swalling exceptions
+/*
 		} catch (InvocationTargetException ex) {
 			if (ex.getCause() instanceof Exception) {
 				throw (Exception) ex.getCause();
@@ -521,6 +523,7 @@ public class ChannelInjector extends ByteToMessageDecoder implements Injector {
 		} catch (Exception e) {
 			channelListener.getReporter().reportDetailed(this,
 					Report.newBuilder(REPORT_CANNOT_INTERCEPT_SERVER_PACKET).callerParam(packet).error(e).build());
+*/ // Solar end
 		} finally {
 			// Attempt to handle the packet nevertheless
 			if (packet != null) {
