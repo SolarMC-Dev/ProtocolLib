@@ -34,6 +34,7 @@ import com.comphenix.protocol.wrappers.collection.ConvertedMap;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableBiMap;
 
+import net.minecraft.server.v1_12_R1.DataWatcher;
 import org.apache.commons.lang3.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -68,10 +69,16 @@ public class WrappedDataWatcher extends AbstractWrapper implements Iterable<Wrap
 	 * 
 	 * @param handle DataWatcher handle
 	 */
-	public WrappedDataWatcher(Object handle) {
+// Solar start - type-safety
+	public WrappedDataWatcher(DataWatcher handle) {
 		super(HANDLE_TYPE);
 		setHandle(handle);
 	}
+	@Deprecated
+	public WrappedDataWatcher(Object handle) {
+		this((DataWatcher) handle);
+	}
+// Solar end
 
 	/**
 	 * Constructs a new DataWatcher using a fake egg entity. The
@@ -79,7 +86,7 @@ public class WrappedDataWatcher extends AbstractWrapper implements Iterable<Wrap
 	 * have to be added using watcher objects.
 	 */
 	public WrappedDataWatcher() {
-		this(newHandle(fakeEntity()));
+		this(newHandle((net.minecraft.server.v1_12_R1.Entity) fakeEntity())); // Solar - cast
 	}
 
 	/**
@@ -113,12 +120,12 @@ public class WrappedDataWatcher extends AbstractWrapper implements Iterable<Wrap
 		}
 	}
 
-	private static Object newHandle(Object entity) {
+	private static DataWatcher newHandle(net.minecraft.server.v1_12_R1.Entity entity) { // Solar - type-safety
 		if (constructor == null) {
 			constructor = Accessors.getConstructorAccessor(HANDLE_TYPE, MinecraftReflection.getEntityClass());
 		}
 
-		return constructor.invoke(entity);
+		return (DataWatcher) constructor.invoke(entity); // Solar - cast
 	}
 
 	private static Object fakeEntity() {

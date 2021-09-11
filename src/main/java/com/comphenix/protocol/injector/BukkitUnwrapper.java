@@ -29,7 +29,9 @@ import net.minecraft.server.v1_12_R1.WorldServer;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.comphenix.protocol.ProtocolLibrary;
@@ -99,6 +101,10 @@ public class BukkitUnwrapper implements Unwrapper {
 	// Solar start
 	public EntityPlayer unwrapItem(Player player) {
 		return ((CraftPlayer) player).getHandle();
+	}
+
+	public net.minecraft.server.v1_12_R1.Entity unwrapItem(Entity entity) {
+		return ((CraftEntity) entity).getHandle();
 	}
 
 	public WorldServer unwrapItem(World world) {
