@@ -19,7 +19,6 @@ package com.comphenix.protocol.injector.netty;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.PacketType.Protocol;
 import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.error.Report;
 import com.comphenix.protocol.error.ReportType;
 import com.comphenix.protocol.events.ConnectionSide;
 import com.comphenix.protocol.events.NetworkMarker;
@@ -52,6 +51,9 @@ import io.netty.util.internal.TypeParameterMatcher;
 import org.apache.commons.lang3.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import space.arim.omnibus.util.ThisClass;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -95,6 +97,7 @@ public class ChannelInjector extends ByteToMessageDecoder implements Injector {
 			throw new RuntimeException("Encountered an error caused by a reload! Please properly restart your server!", ex);
 		}
 
+/* Solar start
 		Method hiddenClassMethod = null;
 		try {
 			if (Float.parseFloat(System.getProperty("java.class.version")) >= 59) {
@@ -104,12 +107,17 @@ public class ChannelInjector extends ByteToMessageDecoder implements Injector {
 
 		}
 		IS_HIDDEN_CLASS = hiddenClassMethod;
+*/ // Solar
 	}
 
 	// Starting in Java 15 (59), the lambdas are hidden classes and we cannot use reflection to update
 	// the values anymore. Instead, the object will have to be reconstructed.
 	private static final Map<Class<?>, ObjectReconstructor<?>> RECONSTRUCTORS = new ConcurrentHashMap<>();
+	/* Solar start - remove junk and add logger
 	private static final Method IS_HIDDEN_CLASS;
+	*/
+	private static final Logger logger = LoggerFactory.getLogger(ThisClass.get());
+	// Solar end
 
 	// Saved accessors
 	private Method decodeBuffer;
@@ -469,6 +477,7 @@ public class ChannelInjector extends ByteToMessageDecoder implements Injector {
 		NetworkMarker marker = null;
 		PacketEvent event = currentEvent;
 
+		Throwable thrownEx = null; // Solar - manual error handling
 		try {
 			// Skip every kind of non-filtered packet
 			if (unfilteredProcessedPackets.remove(packet)) {
@@ -514,7 +523,7 @@ public class ChannelInjector extends ByteToMessageDecoder implements Injector {
 				// Sent listeners?
 				finalEvent = event;
 			}
-// Solar start - stop swalling exceptions
+// Solar start - correct exception handling
 /*
 		} catch (InvocationTargetException ex) {
 			if (ex.getCause() instanceof Exception) {
@@ -523,23 +532,48 @@ public class ChannelInjector extends ByteToMessageDecoder implements Injector {
 		} catch (Exception e) {
 			channelListener.getReporter().reportDetailed(this,
 					Report.newBuilder(REPORT_CANNOT_INTERCEPT_SERVER_PACKET).callerParam(packet).error(e).build());
-*/ // Solar end
+*/
+		} catch (Throwable ex) {
+			thrownEx = ex;
 		} finally {
 			// Attempt to handle the packet nevertheless
 			if (packet != null) {
 				try {
 					encodeBuffer.invoke(vanillaEncoder, ctx, packet, output);
-				} catch (InvocationTargetException ex) {
+				} catch (Throwable ex) {
+					if (thrownEx != null) {
+						thrownEx.addSuppressed(ex);
+						// SAFETY: We retain all exceptions caught by throwing 'thrownEx'
+						//noinspection ThrowFromFinallyBlock
+						throw rethrowException(thrownEx);
+					}
+					// SAFETY: We do not obscure exceptions formerly caught; they are handled above
+					//noinspection ThrowFromFinallyBlock
+					throw rethrowException(ex);
+					/* ProtocolLib's original (poor) exception handling
 					if (ex.getCause() instanceof Exception) {
 						//noinspection ThrowFromFinallyBlock
 						throw (Exception) ex.getCause();
 					}
+					*/
 				}
 
 				finalEvent = event;
 			}
 		}
+		if (thrownEx != null) throw rethrowException(thrownEx);
 	}
+	private static Exception rethrowException(Throwable ex) {
+		if (ex instanceof InvocationTargetException ite && ite.getCause() instanceof Exception cause) {
+			return cause;
+		}
+		if (ex instanceof Exception exception) {
+			return exception;
+		}
+		return new RuntimeException(
+				"This doesn't usually happen, but I have the suspicion that it is not good.", ex);
+	}
+	// Solar end
 
 	/**
 	 * Invoked when a packet has been written to the channel
@@ -571,6 +605,7 @@ public class ChannelInjector extends ByteToMessageDecoder implements Injector {
 			try {
 				decodeBuffer.invoke(vanillaDecoder, ctx, byteBuffer, packets);
 			} catch (IllegalArgumentException ex) {
+				logger.warn("Stop swallowing exceptions (#3)", ex); // Solar - stop swallowing
 				updateBufferMethods();
 				decodeBuffer.invoke(vanillaDecoder, ctx, byteBuffer, packets);
 			}
@@ -608,6 +643,7 @@ public class ChannelInjector extends ByteToMessageDecoder implements Injector {
 					}
 				}
 			}
+/* Solar start - stop swalling exceptions
 		} catch (InvocationTargetException ex) {
 			if (ex.getCause() instanceof Exception) {
 				throw (Exception) ex.getCause();
@@ -615,7 +651,9 @@ public class ChannelInjector extends ByteToMessageDecoder implements Injector {
 		} catch (Exception e) {
 			channelListener.getReporter().reportDetailed(this,
 					Report.newBuilder(REPORT_CANNOT_INTERCEPT_CLIENT_PACKET).callerParam(byteBuffer).error(e).build());
-		}
+*/
+		} finally {}
+// Solar end
 	}
 
 	/**
@@ -666,6 +704,7 @@ public class ChannelInjector extends ByteToMessageDecoder implements Injector {
 			try {
 				PACKET_SET_PROTOCOL = PacketType.Handshake.Client.SET_PROTOCOL.getPacketClass();
 			} catch (Throwable ex) {
+				logger.warn("Stop swallowing exceptions (#1)", ex); // Solar - stop swallowing
 				PACKET_SET_PROTOCOL = getClass(); // If we can't find it don't worry about it
 			}
 		}
@@ -676,6 +715,7 @@ public class ChannelInjector extends ByteToMessageDecoder implements Injector {
 				int protocol = (int) fuzzy.invokeMethod(packet, "getProtocol", int.class);
 				originalChannel.attr(PROTOCOL_KEY).set(protocol);
 			} catch (Throwable ex) {
+				logger.warn("Stop swallowing exceptions (#2)", ex); // Solar - stop swallowing
 				// Oh well
 			}
 		}
@@ -748,8 +788,12 @@ public class ChannelInjector extends ByteToMessageDecoder implements Injector {
 				MinecraftMethods.getSendPacketMethod().invoke(getPlayerConnection(), packet);
 			}
 		} catch (Throwable ex) {
+/* Solar start - sanity first
 			ProtocolLibrary.getErrorReporter().reportWarning(this,
 					Report.newBuilder(REPORT_CANNOT_SEND_PACKET).messageParam(packet, playerName).error(ex).build());
+*/
+			logger.error("Error in invokeSendPacket", ex);
+// Solar end
 		}
 	}
 
@@ -763,7 +807,11 @@ public class ChannelInjector extends ByteToMessageDecoder implements Injector {
 				MinecraftMethods.getNetworkManagerReadPacketMethod().invoke(networkManager, null, packet);
 			} catch (Exception e) {
 				// Inform the user
+/* Solar start - sanity first
 				ProtocolLibrary.getErrorReporter().reportMinimal(factory.getPlugin(), "recieveClientPacket", e);
+*/
+				logger.error("Error in receiveClientPacket", e);
+// Solar end
 			}
 		};
 
@@ -919,8 +967,12 @@ public class ChannelInjector extends ByteToMessageDecoder implements Injector {
 			try {
 				command.run();
 			} catch (Exception e) {
+/* Solar start
 				ProtocolLibrary.getErrorReporter().reportDetailed(ChannelInjector.this,
 						Report.newBuilder(REPORT_CANNOT_EXECUTE_IN_CHANNEL_THREAD).error(e).build());
+*/
+				logger.error("Error in executeInChannelThread", e);
+// Solar end
 			}
 		});
 	}
@@ -1006,6 +1058,9 @@ public class ChannelInjector extends ByteToMessageDecoder implements Injector {
 	}
 
 	private static boolean isHiddenClass(Class<?> clz) {
+// Solar start - replace reflection
+		return clz.isHidden();
+/*
 		if (IS_HIDDEN_CLASS == null) {
 			return false;
 		}
@@ -1014,5 +1069,6 @@ public class ChannelInjector extends ByteToMessageDecoder implements Injector {
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to determine whether class '" + clz.getName() + "' is hidden or not", e);
 		}
+*/ // Solar end
 	}
 }
