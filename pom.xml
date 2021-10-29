@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>gg.solarmc</groupId>
 		<artifactId>solar-parent</artifactId>
-		<version>0.6.2</version>
+		<version>1.1.0</version>
 	</parent>
 <!-- Solar end -->
     <groupId>com.comphenix.protocol</groupId>
@@ -25,6 +25,7 @@
 
 		<powermock.version>2.0.7</powermock.version>
 		<spigot.version>1.17.1-R0.1-SNAPSHOT</spigot.version>
+<!-- Solar -->  <solar-parent.skip-javadoc>true</solar-parent.skip-javadoc>
 	</properties>
 
 	<build>
@@ -303,8 +304,8 @@ Solar end -->
 		</repository>
  -->
 		<repository>
-			<id>solar-releases</id>
-			<url>https://mvn-repo.solarmc.gg/releases</url>
+			<id>solar-repo</id>
+			<url>https://repo.solarmc.gg/mvn</url>
 		</repository>
 <!-- Solar end -->
 	</repositories>
