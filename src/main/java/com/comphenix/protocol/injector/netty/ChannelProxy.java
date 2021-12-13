@@ -37,6 +37,8 @@ import io.netty.channel.ChannelPromise;
 import io.netty.channel.EventLoop;
 import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class ChannelProxy implements Channel {
 	// Mark that a certain object does not contain a message field
@@ -58,6 +60,7 @@ public abstract class ChannelProxy implements Channel {
 
 	// Event loop proxy
 	private transient EventLoopProxy loopProxy;
+	private static final Logger logger = LoggerFactory.getLogger(ChannelProxy.class);
 
 	public ChannelProxy(Channel delegate, Class<?> messageClass) {
 		this.delegate = delegate;
@@ -222,6 +225,7 @@ public abstract class ChannelProxy implements Channel {
 
 	@Override
     public ChannelFuture close() {
+		logger.debug("ChannelProxy#close (io.netty.channel.Channel#close) called", new Exception());
 		return delegate.close();
 	}
 
